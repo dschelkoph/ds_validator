@@ -1,0 +1,49 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.205.2/containers/python-3
+{
+    "dockerComposeFile": [
+        "docker-compose.yaml"
+    ],
+    "name": "${localWorkspaceFolderBasename}",
+    "service": "devcontainer",
+    "workspaceFolder": "/workspace",
+    "postCreateCommand": ".devcontainer/lifecycle_hooks/post_create.bash",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "[python]": {
+                    "editor.codeActionsOnSave": {
+                        "source.fixAll.ruff": "explicit",
+                        "source.organizeImports.ruff": "always"
+                    },
+                    "editor.defaultFormatter": "charliermarsh.ruff"
+                },
+                "notebook.formatOnSave.enabled": true,
+                "notebook.formatOnCellExecution": true,
+                "notebook.codeActionsOnSave": {
+                    "source.organizeImports": true
+                },
+                "editor.formatOnSave": true,
+                "files.autoSave": "onFocusChange",
+                "files.trimTrailingWhitespace": true,
+                "python.defaultInterpreterPath": "/home/dev/.venv/project/bin/python",
+                "python.testing.pytestEnabled": true,
+                "ruff.path": [
+                    "/home/dev/.local/bin/ruff"
+                ]
+            },
+            // Add the IDs of extensions you want installed when the container is created.
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ritwickdey.liveserver",
+                "njpwerner.autodocstring",
+                "ryanluker.vscode-coverage-gutters",
+                "tamasfe.even-better-toml",
+                "charliermarsh.ruff",
+                "bdsoftware.format-on-auto-save",
+                "ms-toolsai.jupyter"
+            ]
+        }
+    }
+}

@@ -1,0 +1,1 @@
+Place scripts here to make them accessible in the terminal.

@@ -1,0 +1,90 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "sample_package"
+version = "0.1.0"
+description = "<DESCRIPTION>"
+authors = ["Your Name <you@example.com>"]
+license = "<LICENSE>"
+packages = [{ include = "sample_package", from = "python" }]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "*"
+pytest-cov = "*"
+pytest-randomly = "*"
+pytest-xdist = "*"
+
+[tool.coverage.run]
+branch = true
+data_file = "coverage/.coverage"
+# must comment `dynamic_context` when using xdist
+dynamic_context = "test_function"
+include = ["python/**"]
+omit = ["python/tests/**"]
+
+[tool.coverage.report]
+skip_covered = true
+skip_empty = true
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "pass($|\\s)",
+    "\\.{3}$",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]
+
+[tool.coverage.html]
+show_contexts = true
+directory = "coverage/htmlcov"
+
+[tool.coverage.xml]
+output = "coverage/coverage.xml"
+
+[tool.pytest.ini_options]
+testpaths = ["python/tests/**"]
+required_plugins = ["pytest-randomly", "pytest-cov"]
+# add `-n auto` to use xdist; must remove `dynamic_context` from coverage
+addopts = "--cov=python --cov-report=term --cov-report=html"
+
+[tool.pyright]
+typeCheckingMode = "basic"
+include = "python"
+
+[tool.ruff]
+src = ["python"]
+target-version = "py38"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "F",   # Pyflakes
+    "E",   # pycodestyle
+    "C",   # mccabe
+    "I",   # isort
+    "N",   # pep8-naming
+    "D",   # pydocstyle
+    "UP",  # pyupgrade
+    "S",   # flake8-bandit
+    "B",   # flake8-bugbear
+    "A",   # flake8-builtins
+    "C4",  # flake8-comprehensions
+    "G",   # flake8-logging-format
+    "PT",  # flake8-pytest-style
+    "RET", # flake8-return
+    "SIM", # flake8-simplify
+    "ARG", # flake8-unused-arguments
+    "TRY", # tryceratops
+    "RUF", # ruff
+]
+
+[tool.ruff.lint.per-file-ignores]
+"python/tests/**" = ["S101"]
+
+[tool.ruff.pydocstyle]
+convention = "google"

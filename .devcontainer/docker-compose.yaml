@@ -1,0 +1,16 @@
+services:
+  devcontainer:
+    build:
+      dockerfile: .devcontainer/dev.dockerfile
+      context: ../
+      args:
+        UBUNTU_TAG: "22.04"
+        PYTHON_VERSION: "3.11"
+    volumes:
+      - ../:/workspace
+      - poetry_cache:/home/vscode/.cache/pypoetry
+
+
+volumes:
+  poetry_cache:
+    external: true
