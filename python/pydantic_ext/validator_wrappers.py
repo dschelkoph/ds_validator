@@ -1,3 +1,11 @@
+"""Wrappers for Pydantic Validators.
+
+Need to use arguments with `super()` due to a known issue in cpython: https://github.com/python/cpython/pull/111538
+"""
+
+# ignore arguments in super call
+# ruff: noqa: UP008
+
 import abc
 from dataclasses import dataclass, field
 from typing import Any
@@ -6,7 +14,7 @@ from pydantic import AfterValidator, BeforeValidator, PlainValidator
 from pydantic_core import core_schema
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class PydanticAfterValidator(AfterValidator):
     func: core_schema.NoInfoValidatorFunction | core_schema.WithInfoValidatorFunction = field(
         init=False
@@ -17,7 +25,7 @@ class PydanticAfterValidator(AfterValidator):
         raise NotImplementedError()
 
     def __post_init__(self):
-        super().__init__(self.validate)
+        super(PydanticAfterValidator, self).__init__(self.validate)
 
 
 @dataclass(slots=True, frozen=True)
@@ -31,7 +39,7 @@ class PydanticBeforeValidator(BeforeValidator):
         raise NotImplementedError()
 
     def __post_init__(self):
-        super().__init__(self.validate)
+        super(PydanticBeforeValidator, self).__init__(self.validate)
 
 
 @dataclass(slots=True, frozen=True)
@@ -45,4 +53,4 @@ class PydanticPlainValidator(PlainValidator):
         raise NotImplementedError()
 
     def __post_init__(self):
-        super().__init__(self.validate)
+        super(PydanticPlainValidator, self).__init__(self.validate)
