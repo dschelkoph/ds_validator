@@ -3,22 +3,21 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-name = "sample_package"
+name = "pydantic_ext"
 version = "0.1.0"
-description = "<DESCRIPTION>"
-authors = ["Your Name <you@example.com>"]
+description = "Enhance pydantic validation capabilities."
+authors = ["Daniel Schelkoph <you@example.com>"]
 license = "<LICENSE>"
-packages = [{ include = "sample_package", from = "python" }]
+packages = [{ include = "pydantic_ext", from = "python" }]
 
 [tool.poetry.dependencies]
 python = "^3.10,<3.13"
 pydantic = "^2.5.2"
 typing-extensions = "^4.9.0"
-pandas = "^2.1.4"
-exceptiongroup = "^1.2.0"
-rich = "^13.7.0"
 
 [tool.poetry.group.dev.dependencies]
+rich = "^13.7.0"
+pandas = "^2.1.4"
 pytest = "*"
 pytest-cov = "*"
 pytest-randomly = "*"

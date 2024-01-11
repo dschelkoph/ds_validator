@@ -1,3 +1,5 @@
+"""Required columns/dtypes for pandas dataframes."""
+
 from dataclasses import dataclass
 from typing import TypeAlias
 
@@ -12,6 +14,11 @@ ColumnType: TypeAlias = str
 
 @dataclass(frozen=True, slots=True)
 class RequiredColumns(PydanticAfterValidator):
+    """Ensure that a dataframe has certain column names with an associated dtype.
+
+    If type is `object`, the column type doesn't matter.
+    """
+
     column_map: dict[ColumnName, ColumnType]
 
     def validate(self, value: pd.DataFrame) -> pd.DataFrame:

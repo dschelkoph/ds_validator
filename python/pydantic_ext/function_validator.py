@@ -1,8 +1,15 @@
+"""Apply pydantic validation to function calls.
+
+Pydantic can perform this task via the [validate_call](https://docs.pydantic.dev/latest/concepts/validation_decorator/)
+decorator, but the validation stops on the first error and doesn't clearly explain what variables/functions
+have the improper data. This decorator attempts to fix this by providing error messages closer to pydantic class
+validation errors by using pydantic's [TypeAdaper](https://docs.pydantic.dev/latest/concepts/type_adapter/) object.
+"""
+
 import functools
 import inspect
 
 from pydantic import TypeAdapter, ValidationError
-from pydantic_core import PydanticCustomError
 
 from pydantic_ext.exceptions.validator import (
     FunctionInputValidationError,
@@ -10,17 +17,8 @@ from pydantic_ext.exceptions.validator import (
 )
 
 
-def create_validator_error(error_type: str, validation_errors: list[str]) -> PydanticCustomError:
-    error_msg_str = "\n\t".join([f"- {error}" for error in validation_errors])
-    error_str = f"{error_type}:\n\t{error_msg_str}"
-    return PydanticCustomError(error_type, error_str, {"validation_errors": validation_errors})
-
-
 def validate(func):
-    """Decorator for functions that performs validation on parameters with the proper metadata.
-
-    Also validates the return value if properly annotated.
-    """
+    """Decorator for functions that performs validation on input and return using pydantic validation."""
     func_signature = inspect.signature(func)
     param_validator_map = {
         param_name: TypeAdapter(param.annotation, config={"arbitrary_types_allowed": True})
