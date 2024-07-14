@@ -3,10 +3,9 @@ from typing import Annotated, TypeAlias
 
 import pandas as pd
 import pyarrow as pa
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, validate_call
 from rich.logging import RichHandler
 
-from pydantic_ext import validate
 from pydantic_ext.pandas_validators import RequiredColumns
 
 logger = logging.getLogger(__name__)
@@ -34,17 +33,17 @@ class Inventory(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
-@validate
+@validate_call(config=ConfigDict(arbitrary_types_allowed=True))
 def get_sale_items(df: Items) -> Items:
     return df.loc[df["on_sale"]]
 
 
-@validate
+@validate_call(config=ConfigDict(arbitrary_types_allowed=True))
 def concat_frames(df_1: Items, df_2: Items) -> Items:
     return pd.concat([df_1, df_2])
 
 
-@validate
+@validate_call(config=ConfigDict(arbitrary_types_allowed=True))
 def bad_return() -> Items:
     return pd.DataFrame(
         {"name": ["Scissors", "Highlighter"], "cost": [1000, 150.4], "quantity": [35, 54]}

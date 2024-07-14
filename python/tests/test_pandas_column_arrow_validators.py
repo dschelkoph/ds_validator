@@ -3,11 +3,8 @@ from typing import Annotated, TypeAlias
 import pandas as pd
 import pyarrow as pa
 import pytest
+from pydantic import ConfigDict, ValidationError, validate_call
 
-from pydantic_ext import validate
-from pydantic_ext.exceptions.validator import (
-    FunctionInputValidationError,
-)
 from pydantic_ext.pandas_validators import RequiredColumns
 
 Items: TypeAlias = Annotated[
@@ -45,7 +42,7 @@ def bad_dataframe():
     return df.convert_dtypes(dtype_backend="pyarrow")
 
 
-@validate
+@validate_call(config=ConfigDict(arbitrary_types_allowed=True))
 def get_sale_items(df: Items) -> Items:
     return df.loc[df["on_sale"]]
 
@@ -55,5 +52,5 @@ def test_arrow_valid_df(valid_dataframe: pd.DataFrame):
 
 
 def test_arrow_invalid_df(bad_dataframe: pd.DataFrame):
-    with pytest.raises(FunctionInputValidationError):
+    with pytest.raises(ValidationError):
         get_sale_items(bad_dataframe)

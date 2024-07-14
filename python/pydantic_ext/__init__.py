@@ -1,4 +1,3 @@
-from .function_validator import validate
 from .validator_wrappers import (
     PydanticAfterValidator,
     PydanticBeforeValidator,
