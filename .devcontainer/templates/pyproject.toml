@@ -54,11 +54,11 @@ addopts = "--cov=python --cov-report=term --cov-report=html"
 
 [tool.pyright]
 typeCheckingMode = "basic"
-include = "python"
+include = ["python"]
 
 [tool.ruff]
 src = ["python"]
-target-version = "py38"
+target-version = "py310"
 line-length = 100
 
 [tool.ruff.lint]
@@ -75,6 +75,7 @@ select = [
     "A",   # flake8-builtins
     "C4",  # flake8-comprehensions
     "G",   # flake8-logging-format
+    "PL",  # pylint
     "PT",  # flake8-pytest-style
     "RET", # flake8-return
     "SIM", # flake8-simplify
@@ -83,8 +84,29 @@ select = [
     "RUF", # ruff
 ]
 
-[tool.ruff.lint.per-file-ignores]
-"python/tests/**" = ["S101"]
+# ignore due to formatter conflicts: https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+ignore = [
+    "W191",
+    "E111",
+    "E114",
+    "E117",
+    "D206",
+    "D300",
+    "Q000",
+    "Q001",
+    "Q003",
+    "COM812",
+    "COM819",
+    "ISC001",
+    "ISC002",
+]
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.per-file-ignores]
+"python/tests/**" = ["S101", "D103"]
+"__init__.py" = ["D104", "F401"]
+
+[tool.ruff.lint.pydocstyle]
 convention = "google"
+
+[tool.ruff.format]
+docstring-code-format = true

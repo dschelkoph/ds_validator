@@ -1,5 +1,6 @@
 from typing import Annotated, TypeAlias
 
+import numpy as np
 import pandas as pd
 import pytest
 from pydantic import BaseModel, ValidationError
@@ -15,10 +16,10 @@ Items: TypeAlias = Annotated[
     pd.DataFrame,
     RequiredColumns(
         {
-            "name": "object",
-            "cost": "int64",
-            "quantity": "int64",
-            "on_sale": "bool",
+            "name": "any",
+            "cost": {np.integer, np.floating},
+            "quantity": np.integer,
+            "on_sale": np.bool,
         }
     ),
 ]
@@ -34,7 +35,7 @@ class Inventory(BaseModel):
 
 @validate
 def get_sale_items(df: Items) -> Items:
-    return df.loc[df["on_sale"] == True]
+    return df.loc[df["on_sale"]]
 
 
 @validate
@@ -77,6 +78,20 @@ def bad_dataframe_2():
     )
 
 
+@pytest.fixture()
+def bad_dataframe_3():
+    # extra column `location`
+    return pd.DataFrame(
+        {
+            "name": ["Pens", "Notepad"],
+            "cost": [75, 300],
+            "quantity": [80, 40],
+            "on_sale": [True, False],
+            "location": ["A.21", "B.35"],
+        }
+    )
+
+
 def test_no_validation_errors_decorator(valid_dataframe: pd.DataFrame):
     get_sale_items(valid_dataframe)
 
@@ -97,9 +112,14 @@ def test_no_validation_errors_class(valid_dataframe: pd.DataFrame):
     Inventory(warehouse_1=valid_dataframe, warehouse_2=valid_dataframe)
 
 
-def test_validation_errors_class(valid_dataframe: pd.DataFrame, bad_dataframe: pd.DataFrame):
+def test_validation_errors_class(valid_dataframe: pd.DataFrame, bad_dataframe_2: pd.DataFrame):
     with pytest.raises(ValidationError):
-        Inventory(warehouse_1=valid_dataframe, warehouse_2=bad_dataframe)
+        Inventory(warehouse_1=valid_dataframe, warehouse_2=bad_dataframe_2)
+
+
+def test_extra_columns_error(bad_dataframe_3: pd.DataFrame):
+    with pytest.raises(FunctionInputValidationError):
+        get_sale_items(bad_dataframe_3)
 
 
 if __name__ == "__main__":

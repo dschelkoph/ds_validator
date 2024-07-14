@@ -1,8 +1,8 @@
 import logging
 from typing import Annotated, TypeAlias
 
-import numpy as np
 import pandas as pd
+import pyarrow as pa
 from pydantic import BaseModel, ConfigDict
 from rich.logging import RichHandler
 
@@ -15,14 +15,15 @@ Items: TypeAlias = Annotated[
     pd.DataFrame,
     RequiredColumns(
         column_map={
-            "name": "any",
-            "cost": np.integer,
-            "quantity": np.integer,
-            "on_sale": np.bool,
+            "name": pd.ArrowDtype(pa.string()),
+            "cost": pd.ArrowDtype(pa.int64()),
+            "quantity": pd.ArrowDtype(pa.int64()),
+            "on_sale": pd.ArrowDtype(pa.bool_()),
         },
         allow_extra_columns=False,
     ),
 ]
+
 """Dataframe with columns that represent an item."""
 
 
@@ -65,16 +66,16 @@ def main():
             "on_sale": [True, False],
         },
     )
+    valid_dataframe = valid_dataframe.convert_dtypes(dtype_backend="pyarrow")
     bad_dataframe = pd.DataFrame(
         {"name": ["Scissors", "Highlighter"], "cost": [1000, 150.4], "quantity": [35, 54]}
     )
+    bad_dataframe = bad_dataframe.convert_dtypes(dtype_backend="pyarrow")
     bad_dataframe_2 = pd.DataFrame(
         {"name": ["Chair"], "cost": [20000.1], "quantity": [20.4], "on_sale": [True]}
     )
+    bad_dataframe_2 = bad_dataframe_2.convert_dtypes(dtype_backend="pyarrow")
 
-    # arrow_df = valid_dataframe.convert_dtypes(dtype_backend="pyarrow")
-    # get_sale_items(arrow_df)
-    valid_dataframe = valid_dataframe.astype({"cost": np.int32})
     valid_sale_items = get_sale_items(valid_dataframe)
 
     invalid_concatenate = concat_frames(bad_dataframe, bad_dataframe_2)

@@ -16,7 +16,7 @@ Custom validators can raise errors by using the `create_validator_error` functio
 
 import abc
 from dataclasses import dataclass, field
-from typing import Generic, TypeVar
+from typing import Any, Generic, TypeVar
 
 from pydantic import AfterValidator, BeforeValidator, PlainValidator
 from pydantic_core import PydanticCustomError, core_schema
@@ -28,7 +28,7 @@ def create_validator_error(error_type: str, validation_errors: list[str]) -> Pyd
     """Helper function for custom validators to create an error that will result in a validation error from pydantic."""
     error_msg_str = "\n      ".join([f"- {error}" for error in validation_errors])
     error_str = f"{error_type}:\n      {error_msg_str}"
-    return PydanticCustomError(error_type, error_str, {"validation_errors": validation_errors})
+    return PydanticCustomError(error_type, error_str, {"validation_errors": validation_errors})  # type: ignore
 
 
 @dataclass(frozen=True, slots=True)
@@ -44,8 +44,7 @@ class PydanticAfterValidator(Generic[ValidatedType], AfterValidator):
     )
 
     @abc.abstractmethod
-    def validate(self, value: ValidatedType) -> ValidatedType:
-        raise NotImplementedError()
+    def validate(self, value: ValidatedType) -> ValidatedType: ...
 
     def __post_init__(self):
         super(PydanticAfterValidator, self).__init__(self.validate)
@@ -64,8 +63,7 @@ class PydanticBeforeValidator(Generic[ValidatedType], BeforeValidator):
     )
 
     @abc.abstractmethod
-    def validate(self, value: ValidatedType) -> ValidatedType:
-        raise NotImplementedError()
+    def validate(self, value: Any) -> ValidatedType: ...
 
     def __post_init__(self):
         super(PydanticBeforeValidator, self).__init__(self.validate)
@@ -86,8 +84,7 @@ class PydanticPlainValidator(Generic[ValidatedType], PlainValidator):
     )
 
     @abc.abstractmethod
-    def validate(self, value: ValidatedType) -> ValidatedType:
-        raise NotImplementedError()
+    def validate(self, value: Any) -> ValidatedType: ...
 
     def __post_init__(self):
         super(PydanticPlainValidator, self).__init__(self.validate)

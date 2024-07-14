@@ -17,7 +17,11 @@ ENV TZ=${TZ_AREA}/${TZ_ZONE} \
     VIRTUAL_ENV=${VIRTUAL_ENV_PATH}
 
 RUN --mount=type=cache,target=/var/cache/apt \
-<<EOF
+    <<EOF
+# in ubuntu 24.04, an ubuntu user was added by default
+# remove it to make room for the `USER` to be UID = 1000
+userdel --remove ubuntu
+
 DIST_CODENAME=$(cat /etc/lsb-release | awk -F= '/DISTRIB_CODENAME/ {print $2}')
 apt-get update
 apt-get install --no-install-recommends --yes curl gpg ca-certificates
@@ -40,7 +44,6 @@ apt-get install --no-install-recommends --yes \
   less \
   nano \
   python${PYTHON_VERSION} \
-  python${PYTHON_VERSION}-distutils \
   python${PYTHON_VERSION}-venv \
   sudo \
   vim
@@ -51,14 +54,15 @@ EOF
 
 USER ${USER}
 
-RUN --mount=type=cache,target=/home/${USER}/.cache/pip,uid=1000 \
+RUN --mount=type=cache,target=/var/cache/apt,uid=1000 \
+    --mount=type=cache,target=/home/${USER}/.cache/pip,uid=1000 \
     --mount=type=cache,target=/home/${USER}/.cache/pipx,uid=1000 \
-<<EOF
-sudo chown -R ${USER}:${USER} /home/${USER}/.cache
+    <<EOF
+sudo apt-get update
+sudo apt-get install --no-install-recommends --yes pipx
 curl --fail --location --silent --show-error https://bootstrap.pypa.io/get-pip.py | python${PYTHON_VERSION} -
 python${PYTHON_VERSION} -m pip install --user pipx
 pipx install ruff
-pipx install glances
 pipx install poetry
 pipx install scalene
 

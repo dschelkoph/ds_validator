@@ -13,14 +13,13 @@ def create_param_error_msg(
     validation_error: ValidationError,
 ) -> str:
     """Helper function to parse pydantic validation errors and return a printable string."""
-    sub_errors = validation_error.errors()
     error_message = "\n    ".join(
         [error_detail["msg"] for error_detail in validation_error.errors()]
     )
 
     param_value_str = str(param_value).replace("\n", " ").strip()
     if len(param_value_str) > 60:
-        param_value_str = f"{param_value_str[:30]} ... {param_value_str[-30:]}"
+        param_value_str = f"{param_value_str[:30]}...{param_value_str[-30:]}"
 
     return f"  {param_name} = {param_value_str}\n    {error_message}"
 

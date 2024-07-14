@@ -30,7 +30,9 @@
                 "python.testing.pytestEnabled": true,
                 "ruff.path": [
                     "/home/dev/.local/bin/ruff"
-                ]
+                ],
+                "ruff.nativeServer": true,
+                "ruff.configurationPreference": "filesystemFirst"
             },
             // Add the IDs of extensions you want installed when the container is created.
             "extensions": [

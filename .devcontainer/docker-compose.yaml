@@ -4,12 +4,11 @@ services:
       dockerfile: .devcontainer/dev.dockerfile
       context: ../
       args:
-        UBUNTU_TAG: "22.04"
-        PYTHON_VERSION: "3.11"
+        UBUNTU_TAG: "24.04"
+        PYTHON_VERSION: "3.10"
     volumes:
       - ../:/workspace
       - poetry_cache:/home/vscode/.cache/pypoetry
-
 
 volumes:
   poetry_cache:
