@@ -3,34 +3,40 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-name = "pydantic_ext"
+name = "ds_validator"
 version = "0.1.0"
-description = "Enhance pydantic validation capabilities."
+description = "Pydantic compatible validators for data science objects."
 authors = ["Daniel Schelkoph <you@example.com>"]
 license = "<LICENSE>"
-packages = [{ include = "pydantic_ext", from = "python" }]
+
+[[tool.poetry.source]]
+name = "torch_x86_64_cpu"
+url = "https://download.pytorch.org/whl/cpu"
+priority = "explicit"
 
 [tool.poetry.dependencies]
 python = "^3.10,<3.13"
 pydantic = "^2.5.2"
-typing-extensions = "^4.9.0"
-pyarrow = "^16.1.0"
 
 [tool.poetry.group.dev.dependencies]
 rich = "^13.7.0"
 pandas = "^2.1.4"
+pyarrow = "^17.0.0"
 pytest = "*"
 pytest-cov = "*"
 pytest-randomly = "*"
 pytest-xdist = "*"
+# don't need the gpu version for testing validation
+torch = [
+    { version = "^2.3.1", source = "torch_x86_64_cpu", markers = "platform_machine == 'x86_64'" },
+    { version = "^2.3.1", source = "pypi", markers = "platform_machine != 'x86_64'" },
+]
 
 [tool.coverage.run]
 branch = true
 data_file = "coverage/.coverage"
 # must comment `dynamic_context` when using xdist
 dynamic_context = "test_function"
-include = ["python/**"]
-omit = ["python/tests/**"]
 
 [tool.coverage.report]
 skip_covered = true
@@ -52,17 +58,16 @@ directory = "coverage/htmlcov"
 output = "coverage/coverage.xml"
 
 [tool.pytest.ini_options]
-testpaths = ["python/tests/**"]
+testpaths = ["tests/**"]
 required_plugins = ["pytest-randomly", "pytest-cov"]
 # add `-n auto` to use xdist; must remove `dynamic_context` from coverage
-addopts = "--cov=python --cov-report=term --cov-report=html"
+addopts = "--cov=src --cov-report=term --cov-report=html"
 
 [tool.pyright]
 typeCheckingMode = "basic"
-include = ["python"]
 
 [tool.ruff]
-src = ["python"]
+src = ["src", "tests"]
 target-version = "py310"
 line-length = 100
 
@@ -107,8 +112,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"python/tests/**" = ["S101", "D103"]
-"__init__.py" = ["D104", "F401"]
+"tests/**" = ["S101", "D103"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"

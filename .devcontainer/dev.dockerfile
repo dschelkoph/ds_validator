@@ -11,7 +11,7 @@ ARG VIRTUAL_ENV_PATH=${USER_HOME}/.venv/project
 
 ENV TZ=${TZ_AREA}/${TZ_ZONE} \
     PATH=${PATH}:${VIRTUAL_ENV_PATH}/bin:${USER_HOME}/.local/bin:/workspace/.devcontainer/scripts \
-    PYTHONPATH=/workspace/python:${VIRTUAL_ENV_PATH} \
+    PYTHONPATH=/workspace/src:${VIRTUAL_ENV_PATH} \
     PYTHONBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     VIRTUAL_ENV=${VIRTUAL_ENV_PATH}

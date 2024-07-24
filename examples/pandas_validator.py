@@ -6,20 +6,21 @@ import pandas as pd
 from pydantic import BaseModel, ConfigDict, validate_call
 from rich.logging import RichHandler
 
-from pydantic_ext.pandas_validators import RequiredColumns
+from ds_validator import ds_validate_call
+from ds_validator.pandas import df_dtype_validator
 
 logger = logging.getLogger(__name__)
 
 Items: TypeAlias = Annotated[
     pd.DataFrame,
-    RequiredColumns(
+    df_dtype_validator(
         column_map={
             "name": "any",
             "cost": np.integer,
-            "quantity": np.integer,
-            "on_sale": np.bool,
+            "quantity": np.dtype("int"),
+            "on_sale": np.dtype(bool),
         },
-        allow_extra_columns=False,
+        other_columns="forbid",
     ),
 ]
 """Dataframe with columns that represent an item."""
@@ -32,12 +33,12 @@ class Inventory(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
-@validate_call(config=ConfigDict(arbitrary_types_allowed=True))
+@ds_validate_call
 def get_sale_items(df: Items) -> Items:
     return df.loc[df["on_sale"]]
 
 
-@validate_call(config=ConfigDict(arbitrary_types_allowed=True))
+@ds_validate_call()
 def concat_frames(df_1: Items, df_2: Items) -> Items:
     return pd.concat([df_1, df_2])
 
@@ -65,7 +66,12 @@ def main():
         },
     )
     bad_dataframe = pd.DataFrame(
-        {"name": ["Scissors", "Highlighter"], "cost": [1000, 150.4], "quantity": [35, 54]}
+        {
+            "name": ["Scissors", "Highlighter"],
+            "cost": [1000, 150.4],
+            "quantity": [35, 54],
+            0: [True, False],
+        }
     )
     bad_dataframe_2 = pd.DataFrame(
         {"name": ["Chair"], "cost": [20000.1], "quantity": [20.4], "on_sale": [True]}
@@ -76,7 +82,7 @@ def main():
     valid_dataframe = valid_dataframe.astype({"cost": np.int32})
     valid_sale_items = get_sale_items(valid_dataframe)
 
-    invalid_concatenate = concat_frames(bad_dataframe, bad_dataframe_2)
+    invalid_concatenate = concat_frames(bad_dataframe, df_2=bad_dataframe_2)
 
     valid_inventory = Inventory(warehouse_1=valid_dataframe, warehouse_2=valid_dataframe)
 

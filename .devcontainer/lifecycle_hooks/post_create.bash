@@ -1,3 +1,4 @@
 #!/bin/bash
 
-poetry update
+poetry lock --no-update
+poetry install

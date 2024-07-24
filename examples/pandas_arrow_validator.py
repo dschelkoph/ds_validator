@@ -6,20 +6,20 @@ import pyarrow as pa
 from pydantic import BaseModel, ConfigDict, validate_call
 from rich.logging import RichHandler
 
-from pydantic_ext.pandas_validators import RequiredColumns
+from ds_validator.pandas import df_dtype_validator
 
 logger = logging.getLogger(__name__)
 
 Items: TypeAlias = Annotated[
     pd.DataFrame,
-    RequiredColumns(
+    df_dtype_validator(
         column_map={
             "name": pd.ArrowDtype(pa.string()),
             "cost": pd.ArrowDtype(pa.int64()),
             "quantity": pd.ArrowDtype(pa.int64()),
             "on_sale": pd.ArrowDtype(pa.bool_()),
         },
-        allow_extra_columns=False,
+        other_columns="forbid",
     ),
 ]
 
@@ -77,7 +77,7 @@ def main():
 
     valid_sale_items = get_sale_items(valid_dataframe)
 
-    invalid_concatenate = concat_frames(bad_dataframe, bad_dataframe_2)
+    # invalid_concatenate = concat_frames(bad_dataframe, bad_dataframe_2)
 
     valid_inventory = Inventory(warehouse_1=valid_dataframe, warehouse_2=valid_dataframe)
 

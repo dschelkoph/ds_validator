@@ -3,41 +3,41 @@ from typing import Annotated, TypeAlias
 import numpy as np
 import pandas as pd
 import pytest
-from pydantic import BaseModel, ConfigDict, ValidationError, validate_call
+from pydantic import ValidationError
 
-from pydantic_ext.pandas_validators import RequiredColumns
+from ds_validator import DsBaseModel, ds_type_adapter, ds_validate_call
+from ds_validator.pandas import df_dtype_validator
 
 Items: TypeAlias = Annotated[
     pd.DataFrame,
-    RequiredColumns(
+    df_dtype_validator(
         {
             "name": "any",
             "cost": {np.integer, np.floating},
             "quantity": np.integer,
-            "on_sale": np.bool,
+            "on_sale": np.bool_,
         }
     ),
 ]
+items_type_adapter = ds_type_adapter(Items)
 
 
-class Inventory(BaseModel):
+class Inventory(DsBaseModel):
     warehouse_1: Items
     warehouse_2: Items
 
-    model_config = ConfigDict(arbitrary_types_allowed=True)
 
-
-@validate_call(config=ConfigDict(arbitrary_types_allowed=True))
+@ds_validate_call()
 def get_sale_items(df: Items) -> Items:
     return df.loc[df["on_sale"]]
 
 
-@validate_call(config=ConfigDict(arbitrary_types_allowed=True))
+@ds_validate_call()
 def concat_frames(df_1: Items, df_2: Items) -> Items:
     return pd.concat([df_1, df_2])
 
 
-@validate_call(config=ConfigDict(arbitrary_types_allowed=True), validate_return=True)
+@ds_validate_call(validate_return=True)
 def bad_return() -> Items:
     return pd.DataFrame(
         {"name": ["Scissors", "Highlighter"], "cost": [1000, 150.4], "quantity": [35, 54]}
@@ -88,6 +88,7 @@ def bad_dataframe_3():
 
 def test_no_validation_errors_decorator(valid_dataframe: pd.DataFrame):
     get_sale_items(valid_dataframe)
+    items_type_adapter.validate_python(valid_dataframe)
 
 
 def test_input_validation_error_decorator(
@@ -114,14 +115,3 @@ def test_validation_errors_class(valid_dataframe: pd.DataFrame, bad_dataframe_2:
 def test_extra_columns_error(bad_dataframe_3: pd.DataFrame):
     with pytest.raises(ValidationError):
         get_sale_items(bad_dataframe_3)
-
-
-if __name__ == "__main__":
-    bad_df_1 = pd.DataFrame(
-        {"name": ["Scissors", "Highlighter"], "cost": [1000, 150.4], "quantity": [35, 54]}
-    )
-    bad_df_2 = pd.DataFrame(
-        {"name": ["Chair"], "cost": [20000.1], "quantity": [20.4], "on_sale": [True]}
-    )
-
-    Inventory(warehouse_1=bad_df_1, warehouse_2=bad_df_2)
