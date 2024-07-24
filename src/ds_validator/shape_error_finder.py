@@ -1,3 +1,5 @@
+"""Common error finder for data science objects."""
+
 from typing import Annotated, TypeAlias
 
 from pydantic import AfterValidator, Field
