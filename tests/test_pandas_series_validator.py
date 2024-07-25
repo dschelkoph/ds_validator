@@ -5,21 +5,21 @@ import pandas as pd
 import pytest
 from pydantic import ValidationError
 
-from ds_validator import bundle_validators, ds_type_adapter, ds_validate_call
+from ds_validator import bundle, ds_type_adapter, ds_validate_call
 from ds_validator.pandas import (
-    series_data_validator,
-    series_index_validator,
-    series_name_validator,
-    series_shape_validator,
+    series_dtype,
+    series_index,
+    series_name,
+    series_shape,
 )
 
 Names: TypeAlias = Annotated[
     pd.Series,
-    bundle_validators(
-        series_data_validator(data_type=np.integer),
-        series_name_validator(name="Numbers"),
-        series_shape_validator(shape=(2,)),
-        series_index_validator(required_indicies={"row_1", "row_2"}, allow_extra=False),
+    bundle(
+        series_dtype(data_type=np.integer),
+        series_name(name="Numbers"),
+        series_shape(shape=(2,)),
+        series_index(required_indicies={"row_1", "row_2"}, allow_extra=False),
     ),
 ]
 
@@ -48,7 +48,7 @@ def test_invalid_series(invalid_series):
 
 
 test = ValidationError
-AnySeries: TypeAlias = Annotated[pd.Series, series_data_validator(data_type="any")]
+AnySeries: TypeAlias = Annotated[pd.Series, series_dtype(data_type="any")]
 
 
 def test_any_validation(invalid_series):

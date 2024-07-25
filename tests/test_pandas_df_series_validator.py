@@ -5,34 +5,34 @@ import pandas as pd
 import pytest
 from pydantic import ValidationError
 
-from ds_validator import bundle_validators, ds_type_adapter
+from ds_validator import bundle, ds_type_adapter
 from ds_validator.pandas import (
-    df_series_validator,
+    df_series,
     df_shape_validator,
-    series_data_validator,
-    series_name_validator,
-    series_shape_validator,
+    series_dtype,
+    series_name,
+    series_shape,
 )
 
-Names: TypeAlias = Annotated[pd.Series, series_data_validator(data_type=np.object_)]
+Names: TypeAlias = Annotated[pd.Series, series_dtype(data_type=np.object_)]
 Costs: TypeAlias = Annotated[
     pd.Series,
-    bundle_validators(
-        series_data_validator(data_type=np.integer),
-        series_shape_validator(shape=(2,)),
-        series_name_validator(name="cost"),
+    bundle(
+        series_dtype(data_type=np.integer),
+        series_shape(shape=(2,)),
+        series_name(name="cost"),
     ),
 ]
 Quantities: TypeAlias = Annotated[
     pd.Series,
-    series_data_validator(data_type=np.integer),
-    series_shape_validator(shape=(range(1, 10_000),)),
+    series_dtype(data_type=np.integer),
+    series_shape(shape=(range(1, 10_000),)),
 ]
-OnSale: TypeAlias = Annotated[pd.Series, series_data_validator(data_type=np.bool)]
+OnSale: TypeAlias = Annotated[pd.Series, series_dtype(data_type=np.bool)]
 
 Items: TypeAlias = Annotated[
     pd.DataFrame,
-    df_series_validator(
+    df_series(
         column_map={
             "name": ds_type_adapter(Names),
             "cost": ds_type_adapter(Costs),

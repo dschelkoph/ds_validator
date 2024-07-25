@@ -6,8 +6,16 @@ build-backend = "poetry.core.masonry.api"
 name = "ds_validator"
 version = "0.1.0"
 description = "Pydantic compatible validators for data science objects."
-authors = ["Daniel Schelkoph <you@example.com>"]
-license = "<LICENSE>"
+authors = ["Daniel Schelkoph"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/dschelkoph/ds_validator"
+keywords = ["pydantic", "torch", "numpy", "pandas", "validation", "types"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Natural Language :: English",
+    "Framework :: Pydantic",
+]
 
 [[tool.poetry.source]]
 name = "torch_x86_64_cpu"

@@ -4,14 +4,12 @@ import numpy as np
 import pytest
 from pydantic import ValidationError
 
-from ds_validator import bundle_validators, ds_type_adapter
-from ds_validator.numpy import np_shape_validator, np_type_validator
+from ds_validator import bundle, ds_type_adapter
+from ds_validator.numpy import np_shape, np_type
 
 Array: TypeAlias = Annotated[
     np.ndarray,
-    bundle_validators(
-        np_type_validator(data_type=np.integer), np_shape_validator(shape=("x", "x", 3, None))
-    ),
+    bundle(np_type(data_type=np.integer), np_shape(shape=("x", "x", 3, None))),
 ]
 array_adapter = ds_type_adapter(Array)
 

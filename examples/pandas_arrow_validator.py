@@ -6,13 +6,13 @@ import pyarrow as pa
 from pydantic import BaseModel, ConfigDict, validate_call
 from rich.logging import RichHandler
 
-from ds_validator.pandas import df_dtype_validator
+from ds_validator.pandas import df_dtype
 
 logger = logging.getLogger(__name__)
 
 Items: TypeAlias = Annotated[
     pd.DataFrame,
-    df_dtype_validator(
+    df_dtype(
         column_map={
             "name": pd.ArrowDtype(pa.string()),
             "cost": pd.ArrowDtype(pa.int64()),

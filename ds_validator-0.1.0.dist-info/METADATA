@@ -1,0 +1,27 @@
+Metadata-Version: 2.1
+Name: ds_validator
+Version: 0.1.0
+Summary: Pydantic compatible validators for data science objects.
+Home-page: https://github.com/dschelkoph/ds_validator
+License: MIT
+Keywords: pydantic,torch,numpy,pandas,validation,types
+Author: Daniel Schelkoph
+Requires-Python: >=3.10,<3.13
+Classifier: Development Status :: 3 - Alpha
+Classifier: Framework :: Pydantic
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Natural Language :: English
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Requires-Dist: pydantic (>=2.5.2,<3.0.0)
+Project-URL: Repository, https://github.com/dschelkoph/ds_validator
+Description-Content-Type: text/markdown
+
+# ds_validator
+Pydantic compatible validators for data science objects.
+
+## Validator Wrappers
+
+

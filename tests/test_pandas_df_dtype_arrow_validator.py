@@ -6,11 +6,11 @@ import pytest
 from pydantic import ValidationError
 
 from ds_validator import ds_validate_call
-from ds_validator.pandas import df_dtype_validator
+from ds_validator.pandas import df_dtype
 
 Items: TypeAlias = Annotated[
     pd.DataFrame,
-    df_dtype_validator(
+    df_dtype(
         {
             "name": "any",
             "cost": {pd.ArrowDtype(pa.int64()), pd.ArrowDtype(pa.float64())},

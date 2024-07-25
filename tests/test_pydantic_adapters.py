@@ -6,9 +6,9 @@ import pytest
 from pydantic import ValidationError
 
 from ds_validator import DsBaseModel, ds_type_adapter, ds_validate_call
-from ds_validator.pandas import df_dtype_validator
+from ds_validator.pandas import df_dtype
 
-NameDf: TypeAlias = Annotated[pd.DataFrame, df_dtype_validator(column_map={"name": np.object_})]
+NameDf: TypeAlias = Annotated[pd.DataFrame, df_dtype(column_map={"name": np.object_})]
 
 
 def df_func(data_frame: NameDf) -> bool: ...
