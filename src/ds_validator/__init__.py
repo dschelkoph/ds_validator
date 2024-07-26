@@ -10,4 +10,4 @@ __all__ = [
     "ds_validate_call",
 ]
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"

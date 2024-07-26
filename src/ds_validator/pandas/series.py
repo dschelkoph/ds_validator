@@ -34,7 +34,7 @@ For Pandas data types, use the following individually, or in a set:
 - "any": Type doesn't matter
 
 If numpy type, uses `np.issubdtype` to determine if `value_dtype` is a subclass of something
-in `required_dtypes`.  Use the [Numpy Chart](https://numpy.org/doc/stable/reference/arrays.scalars.html#scalars)
+in `data_type`.  Use the [Numpy Chart](https://numpy.org/doc/stable/reference/arrays.scalars.html#scalars)
 for more information.
 
 Arrow types require an exact match.

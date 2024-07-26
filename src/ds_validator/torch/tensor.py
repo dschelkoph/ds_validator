@@ -6,9 +6,9 @@ from ..decorators import create_after_validator, create_checker
 from ..shape_error_finder import ShapeValidation, shape_error_finder
 
 
-def tensor_shape_error_finder(data: torch.Tensor, shape: ShapeValidation) -> list[str]:
+def tensor_shape_error_finder(data: torch.Tensor, *, shape: ShapeValidation) -> list[str]:
     """Finds shape errors in tensor object based on requirements."""
-    return shape_error_finder(data_shape=data.shape, shape=shape)
+    return shape_error_finder(data.shape, shape)
 
 
 tensor_shape_checker = create_checker("tensor_shape_error", tensor_shape_error_finder)
@@ -41,7 +41,7 @@ Returns:
 
 
 def tensor_dtype_error_finder(
-    data: torch.Tensor, data_type: torch.dtype | set[torch.dtype]
+    data: torch.Tensor, *, data_type: torch.dtype | set[torch.dtype]
 ) -> list[str]:
     """Find data type errors in tensor compared to requirements."""
     if not isinstance(data_type, set):
@@ -75,7 +75,7 @@ Returns:
 
 
 def tensor_device_error_finder(
-    data: torch.Tensor, device: torch.device, match_index: bool = False
+    data: torch.Tensor, *, device: torch.device, match_index: bool = False
 ) -> list[str]:
     """Finds device location errors based on requirements."""
     validation_errors = []

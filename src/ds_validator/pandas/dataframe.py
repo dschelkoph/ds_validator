@@ -17,7 +17,7 @@ ColumnName: TypeAlias = Hashable
 
 
 def df_shape_error_finder(
-    data: pd.DataFrame, shape: tuple[DimensionValidation, DimensionValidation]
+    data: pd.DataFrame, *, shape: tuple[DimensionValidation, DimensionValidation]
 ) -> list[str]:
     """Validates shape requirements on DataFrame objects."""
     return shape_error_finder(data_shape=data.shape, shape=shape)
@@ -54,6 +54,7 @@ Returns:
 
 def df_series_error_finder(
     value: pd.DataFrame,
+    *,
     column_map: dict[ColumnName, TypeAdapter],
     other_columns: PdDTypeValidation | Literal["forbid"] = "forbid",
 ) -> list[str]:
@@ -143,8 +144,8 @@ For Pandas data types, use the following individually, or in a set:
     - Convert `pyarrow` (pa) types to pd.ArrowDType like the following example: `pd.ArrowDType(pa.int64())`
 - "any": Type doesn't matter
 
-If numpy type, uses `np.issubdtype` to determine if `value_dtype` is a subclass of something
-in `required_dtypes`.  Use the [Numpy Chart](https://numpy.org/doc/stable/reference/arrays.scalars.html#scalars)
+If numpy type, uses `np.issubdtype` to determine if the column's data type is a subclass of something
+in the value of `column_map`. Use the [Numpy Chart](https://numpy.org/doc/stable/reference/arrays.scalars.html#scalars)
 for more information.
 
 Arrow types require an exact match.
@@ -175,6 +176,7 @@ Returns:
 
 def df_dtype_checker(
     value: pd.DataFrame,
+    *,
     column_map: dict[ColumnName, PdDTypeValidation],
     other_columns: PdDTypeValidation | Literal["forbid"] = "forbid",
 ) -> pd.DataFrame:
@@ -218,6 +220,7 @@ def df_dtype_checker(
 
 def df_dtype(
     column_map: dict[ColumnName, PdDTypeValidation],
+    *,
     other_columns: PdDTypeValidation | Literal["forbid"] = "forbid",
 ) -> AfterValidator:
     """Validates Dataframe to ensure that it meets data type requirements and columns.
@@ -235,8 +238,8 @@ def df_dtype(
         - Convert `pyarrow` (pa) types to pd.ArrowDType like the following example: `pd.ArrowDType(pa.int64())`
     - "any": Type doesn't matter
 
-    If numpy type, uses `np.issubdtype` to determine if `value_dtype` is a subclass of something
-    in `required_dtypes`.  Use the [Numpy Chart](https://numpy.org/doc/stable/reference/arrays.scalars.html#scalars)
+    If numpy type, uses `np.issubdtype` to determine if the column's data type is a subclass of something
+    in the value of `column_map`.  Use the [Numpy Chart](https://numpy.org/doc/stable/reference/arrays.scalars.html#scalars)
     for more information.
 
     Arrow types require an exact match.

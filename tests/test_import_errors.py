@@ -3,6 +3,7 @@ import sys
 
 import pytest
 
+import ds_validator.numpy
 import ds_validator.pandas
 import ds_validator.torch
 from ds_validator.exceptions import NumpyImportError, PandasImportError, TorchImportError

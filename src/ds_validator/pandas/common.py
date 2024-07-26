@@ -61,7 +61,7 @@ def convert_pd_dtypes(
 
 
 def pandas_index_error_finder(
-    data: pd.DataFrame | pd.Series, required_indicies: set[Hashable], allow_extra: bool = True
+    data: pd.DataFrame | pd.Series, *, required_indicies: set[Hashable], allow_extra: bool = True
 ) -> list[str]:
     """Checks a Pandas object for the presence of specific indexes.
 

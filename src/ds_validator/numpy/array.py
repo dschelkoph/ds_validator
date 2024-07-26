@@ -8,7 +8,7 @@ from ..decorators import create_after_validator, create_checker
 from ..shape_error_finder import ShapeValidation, shape_error_finder
 
 
-def np_shape_error_finder(array: np.ndarray, shape: ShapeValidation) -> list[str]:
+def np_shape_error_finder(array: np.ndarray, *, shape: ShapeValidation) -> list[str]:
     """Finds shape errors for ndarray base on requirements."""
     return shape_error_finder(data_shape=np.shape(array), shape=shape)
 
@@ -45,7 +45,9 @@ Returns:
 NumpyDType: TypeAlias = type[np.generic] | np.dtype[Any]
 
 
-def np_type_error_finder(array: np.ndarray, data_type: NumpyDType | set[NumpyDType]) -> list[str]:
+def np_type_error_finder(
+    array: np.ndarray, *, data_type: NumpyDType | set[NumpyDType]
+) -> list[str]:
     data_types = data_type if isinstance(data_type, set) else {data_type}
     data_types = {np.dtype(dtype) if isinstance(dtype, np.dtype) else dtype for dtype in data_types}
 
@@ -68,7 +70,7 @@ np_type = create_after_validator(np_type_checker)
     - np.dtype: Solid boxes in chart, Example -> `np.int64` or `np.int_`
 
 Uses `np.issubdtype` to determine if `value_dtype` is a subclass of something
-in `required_dtypes`.  Use the [Numpy Chart](https://numpy.org/doc/stable/reference/arrays.scalars.html#scalars)
+in `data_type`.  Use the [Numpy Chart](https://numpy.org/doc/stable/reference/arrays.scalars.html#scalars)
 for more information.
 
 Usage:
